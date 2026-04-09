@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: power-optimiser
+    env: python
+    plan: starter
+    buildCommand: pip install -U pip && pip install -e .
+    startCommand: uvicorn power_optimiser.web:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OCTOPUS_API_KEY
+        sync: false

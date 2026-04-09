@@ -94,7 +94,7 @@ Summary metrics include:
    - p/kWh for tariff columns
 3. Run:
    ```bash
-   python -m power_optimiser.cli --config configs/default.yaml --input-csv path/to/your_data.csv
+   python -m power_optimiser.cli --config configs/default.yaml --input-csv /absolute/path/to/your_data.csv
    ```
 4. Inspect `outputs/scenario_summary.csv` for side-by-side scenario comparisons.
 
