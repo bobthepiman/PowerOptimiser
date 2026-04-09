@@ -21,19 +21,6 @@ class RunRequest(BaseModel):
     use_live_agile_prices: bool | None = None
 
 
-@app.get("/")
-def root() -> dict[str, Any]:
-    return {
-        "status": "ok",
-        "service": "power-optimiser",
-        "endpoints": {
-            "health": "/health",
-            "run": "/run",
-            "docs": "/docs",
-        },
-    }
-
-
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}

@@ -116,38 +116,13 @@ This repository now includes a FastAPI server at `power_optimiser.web:app` while
 - **Service type:** Web Service
 - **Build Command:** `pip install -U pip && pip install -e .`
 - **Start Command:** `uvicorn power_optimiser.web:app --host 0.0.0.0 --port $PORT`
-- Optional: commit `render.yaml` (included in this repo) to keep Render settings versioned in Git.
 
 The start command binds to `0.0.0.0` and uses Render's assigned `$PORT`.
 
 ### Required environment variables
 - `OCTOPUS_API_KEY` (if your config/data flow uses live Octopus pricing).
 
-
-> [!IMPORTANT]
-> For Render **Web Service** deployments, your start command must be the API server command:
-> `uvicorn power_optimiser.web:app --host 0.0.0.0 --port $PORT`
->
-> If you run `python -m power_optimiser.cli ...` as the Render start command, the process exits after one run and Render will report **"No open ports detected"**.
-
-
-
-### Common deploy failure and fix
-If deploy logs show a command like:
-
-```
-python -m power_optimiser.cli --config configs/default.yaml --input-csv path/to/your_data.csv
-```
-
-that means Render is running the CLI (batch job) instead of the web server. This fails for two reasons:
-1. `path/to/your_data.csv` is a placeholder path and usually does not exist in the Render container.
-2. CLI mode does not bind an HTTP port, so Render cancels deploy for Web Services.
-
-Use the start command shown above (or include the provided `render.yaml`) so Render runs Uvicorn and exposes `/health` and `/run`.
-
 ### API endpoints
-- `GET /`
-  - Returns API service info and endpoint links.
 - `GET /health`
   - Returns `{"status":"ok"}`
 - `POST /run`
