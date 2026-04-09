@@ -11,7 +11,19 @@ from power_optimiser.reporting import save_savings_chart, write_summary
 from power_optimiser.tariffs import baseline_costs
 
 
-def run_model(config_path: str, csv_path: str) -> pd.DataFrame:
+def run_model(config_path: str, csv_path: str, use_live_agile_prices: bool = False) -> pd.DataFrame:
+    """Run scenario analysis and write outputs.
+
+    Args:
+        config_path: Path to YAML run configuration.
+        csv_path: Path to half-hourly input CSV.
+        use_live_agile_prices: Reserved flag for live Agile integration.
+
+    Returns:
+        DataFrame with one row per scenario and baseline comparison metrics.
+    """
+    _ = use_live_agile_prices
+
     config = load_config(config_path)
     ensure_database(config.db_path, csv_path, config.input_table)
     df = load_input_data(config.db_path, config.input_table)
