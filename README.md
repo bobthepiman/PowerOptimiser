@@ -70,7 +70,7 @@ For maintainability and auditability, this repo uses LP now; if dependency minim
 ```bash
 python -m pip install -e .[dev]
 python scripts_generate_sample_data.py
-python -m power_optimiser.cli --config configs/default.yaml --input-csv data/sample_half_hourly_input.csv
+python -m power_optimiser.cli --config configs/default.yaml --input-csv data/sample_half_hourly_input.csv --use-live-agile-prices
 pytest
 ```
 
@@ -106,3 +106,62 @@ Planned extension points:
 - Add multiple tariff backtests and side-by-side strategy comparisons.
 
 The current code separates data ingestion, assumptions, optimisation, and reporting to keep this path straightforward.
+
+
+## Run as a Render Web Service
+
+This repository now includes a FastAPI server at `power_optimiser.web:app` while keeping the existing CLI unchanged.
+
+### Render service settings
+- **Service type:** Web Service
+- **Build Command:** `pip install -U pip && pip install -e .`
+- **Start Command:** `uvicorn power_optimiser.web:app --host 0.0.0.0 --port $PORT`
+
+The start command binds to `0.0.0.0` and uses Render's assigned `$PORT`.
+
+### Required environment variables
+- `OCTOPUS_API_KEY` (if your config/data flow uses live Octopus pricing).
+
+### API endpoints
+- `GET /health`
+  - Returns `{"status":"ok"}`
+- `POST /run`
+  - Triggers the existing `run_model(...)` pipeline.
+  - Accepts optional JSON body (or query params):
+    - `config_path` (default: `configs/default.yaml`)
+    - `input_csv` (default: `data/sample_half_hourly_input.csv`)
+    - `use_live_agile_prices` (default: `false`)
+
+### Example curl commands
+
+Health check:
+
+```bash
+curl -s http://localhost:8000/health
+```
+
+Run model with defaults:
+
+```bash
+curl -s -X POST http://localhost:8000/run \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+Run model with explicit paths and live-price flag:
+
+```bash
+curl -s -X POST http://localhost:8000/run \
+  -H "Content-Type: application/json" \
+  -d '{
+    "config_path": "configs/default.yaml",
+    "input_csv": "data/sample_half_hourly_input.csv",
+    "use_live_agile_prices": true
+  }'
+```
+
+For local API development:
+
+```bash
+uvicorn power_optimiser.web:app --host 0.0.0.0 --port 8000
+```
