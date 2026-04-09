@@ -1,0 +1,14 @@
+data:
+  db_path: data/power_optimiser.duckdb
+  input_table: half_hourly_input
+
+model:
+  interval_hours: 0.5
+  battery_capacities_kwh: [5, 10, 15, 20, 25]
+  round_trip_efficiencies: [0.70, 0.85]
+  max_charge_kw: 3.0
+  max_discharge_kw: 3.0
+  initial_soc_fraction: 0.5
+
+outputs:
+  output_dir: outputs
